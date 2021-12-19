@@ -1,9 +1,10 @@
 import json
+from json import encoder
 from typing import Dict
 from facebook import GraphAPI
-import pprint
-from pprint import pp
+import requests
 from secrets import accessToken
+from spellcheck import put_text_into_spellboy
 
 page_id = 112473910504378
 
@@ -23,14 +24,24 @@ def retrive_posts_from_file() -> Dict:
     js = json.loads(data)
     return js
 
-def main_facebook_sdk():
-    posts = retrive_posts_from_file()
-    first_m = posts["data"][0]["message"]
-    print(''.join(first_m))
-
-
 def main():
-    main_facebook_sdk()
+    posts = retrive_posts()
+    first_post = posts["data"][2]
+    first_m = first_post["message"]
+    print(first_m)
+    post_id = first_post["id"]
+    print(post_id)
+    new_text = put_text_into_spellboy(first_m)
+    post_url = f"https://graph.facebook.com/{post_id}"
+    payload = {
+        'message': new_text,
+    }
+    data = json.dumps(payload)
+    print(data)
+    graph = GraphAPI(access_token=accessToken, version=2.12)
+    result = graph.request(f'{post_id}/', post_args=payload)
+    # result = requests.post(post_url, data=data)
+    print(result) 
 
 
 if __name__ == "__main__":
