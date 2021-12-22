@@ -6,6 +6,7 @@ import requests
 from secrets import accessToken
 from spellcheck import put_text_into_spellboy
 
+# santiago
 page_id = 112473910504378
 
 def retrive_posts() -> Dict:
@@ -24,23 +25,24 @@ def retrive_posts_from_file() -> Dict:
     js = json.loads(data)
     return js
 
+def update_post(post_id: number, message: str) -> Any:
+    payload = {
+        'message': message,
+    }
+    graph = GraphAPI(access_token=accessToken, version=2.12)
+    result = graph.request(f'{post_id}/', post_args=payload)
+    return result
+
 def main():
-    posts = retrive_posts()
-    first_post = posts["data"][2]
+    data = retrive_posts()
+    posts = data["data"]
+    first_post = posts[0]
     first_m = first_post["message"]
     print(first_m)
     post_id = first_post["id"]
     print(post_id)
     new_text = put_text_into_spellboy(first_m)
-    post_url = f"https://graph.facebook.com/{post_id}"
-    payload = {
-        'message': new_text,
-    }
-    data = json.dumps(payload)
-    print(data)
-    graph = GraphAPI(access_token=accessToken, version=2.12)
-    result = graph.request(f'{post_id}/', post_args=payload)
-    # result = requests.post(post_url, data=data)
+    result = update_post(post_id, new_text)
     print(result) 
 
 
