@@ -1,9 +1,9 @@
 import json
 from json import encoder
-from typing import Dict
+from typing import Dict, Any
 from facebook import GraphAPI
 import requests
-from secrets import accessToken
+from secrets import accessToken 
 from spellcheck import put_text_into_spellboy
 
 # santiago
@@ -25,7 +25,8 @@ def retrive_posts_from_file() -> Dict:
     js = json.loads(data)
     return js
 
-def update_post(post_id: number, message: str) -> Any:
+
+def update_post(post_id: int, message: str) -> Any:
     payload = {
         'message': message,
     }
@@ -41,9 +42,9 @@ def main():
     print(first_m)
     post_id = first_post["id"]
     print(post_id)
-    new_text = put_text_into_spellboy(first_m)
-    result = update_post(post_id, new_text)
-    print(result) 
+    # new_text = put_text_into_spellboy(first_m)
+    # result = update_post(post_id, new_text)
+    # print(result) 
 
 
 if __name__ == "__main__":
