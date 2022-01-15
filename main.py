@@ -3,17 +3,17 @@ from json import encoder
 from typing import Dict, Any
 from facebook import GraphAPI
 import requests
-from secrets import accessToken
 from spellcheck import put_text_into_spellboy
 from ui import SpellcheckUI
+from pages import Page, pages
+  
 
-# santiago
-page_id = 112473910504378
-
-
-def retrive_posts() -> Dict:
-    graph = GraphAPI(access_token=accessToken, version=2.12)
-    posts = graph.request(f"{page_id}/posts")
+def retrive_posts(page: Page) -> Dict:
+    page_data = pages[page.value]
+    token = page_data["token"]
+    id = page_data["id"]
+    graph = GraphAPI(access_token=token, version=2.12)
+    posts = graph.request(f"{id}/posts")
     return posts
 
 
@@ -30,19 +30,21 @@ def retrive_posts_from_file() -> Dict:
     return js
 
 
-def update_post(post_id: int, message: str) -> Any:
+def update_post(page: Page, post_id: int, message: str) -> Any:
+    token = pages[page.value]["token"]
+    print(post_id)
     payload = {
         "message": message,
     }
-    graph = GraphAPI(access_token=accessToken, version=2.12)
+    graph = GraphAPI(access_token=token, version=2.12)
     result = graph.request(f"{post_id}/", post_args=payload)
     return result
 
 
 def main():
-    data = retrive_posts_from_file()
+    data = retrive_posts(Page.LA_VEGA)
     posts = data["data"]
-    ui = SpellcheckUI(posts)
+    ui = SpellcheckUI(posts, update_post)
     ui.display()
     # first_post = posts[0]
     # first_m = first_post["message"]
