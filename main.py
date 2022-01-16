@@ -76,7 +76,7 @@ class SpellcheckUI:
         mainframe = ttk.Frame(root, padding="3 3 12 12")
         mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
         root.columnconfigure(0, weight=1)
-        root.rowconfigure(0, weight=0)
+        root.rowconfigure(0, weight=1)
 
         mainframe.columnconfigure(0, weight=1, minsize=75)
         mainframe.rowconfigure(0, weight=1, minsize=50)
@@ -104,16 +104,16 @@ class SpellcheckUI:
         )
 
         text_box = tk.Text(mainframe, undo=True)
-        text_box.grid(column=0, columnspan=3, row=1)
+        text_box.grid(column=0, columnspan=3, row=2)
         self._post_text_box = text_box
 
         tk.Button(mainframe, text="previous", command=self.previous_post).grid(
-            column=0, row=2
+            column=0, row=1
         )
         tk.Button(mainframe, text="update", command=self.update_current_post).grid(
-            column=1, row=2
+            column=1, row=1
         )
-        tk.Button(mainframe, text="next", command=self.next_post).grid(column=2, row=2)
+        tk.Button(mainframe, text="next", command=self.next_post).grid(column=2, row=1)
 
         root.mainloop()
 
