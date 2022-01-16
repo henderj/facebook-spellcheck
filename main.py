@@ -68,8 +68,8 @@ def update_post(page: Page, post_id: int, message: str) -> Any:
 
 
 class SpellcheckUI:
-    def __init__(self, posts) -> None:
-        self._posts = posts
+    def __init__(self) -> None:
+        self._page = None
 
     def display(self):
         root = tk.Tk()
@@ -78,11 +78,18 @@ class SpellcheckUI:
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=0)
 
+        mainframe.columnconfigure(0, weight=1, minsize=75)
+        mainframe.rowconfigure(0, weight=1, minsize=50)
+        mainframe.columnconfigure(1, weight=1, minsize=75)
+        mainframe.rowconfigure(1, weight=1, minsize=50)
+        mainframe.columnconfigure(2, weight=1, minsize=75)
+        mainframe.rowconfigure(2, weight=1, minsize=50)
+
         page_selection_text = StringVar(value="Select a page...")
         page_selection = ttk.Combobox(
             mainframe,
             textvariable=page_selection_text,
-            values=[Page.__members__.values],
+            values=["Santiago", "La Vega", "Navarrete", "Puerto Plata"],
         )
         page_selection.state(["readonly"])
         page_selection.bind("<<ComboboxSelected>>", self.page_changed)
@@ -112,11 +119,20 @@ class SpellcheckUI:
 
     def page_changed(self, arg1):
         self.page_selection.selection_clear()
+        page_name = self.page_selection.get()
+        if(page_name == "Santiago"): self._page = Page.SANTIAGO
+        elif(page_name == "La Vega"): self._page = Page.LA_VEGA
+        elif(page_name == "Navarrete"): self._page = Page.NAVARRETE
+        elif(page_name == "Puerto Plata"): self._page = Page.PUERTO_PLATA
 
     def open_spellboy(self):
         webbrowser.open("www.spellboy.com", new=2)
 
     def load_posts(self):
+        if(self._page == None): return
+        data = retrive_posts(self._page)
+        posts = data["data"]
+        self._posts = posts
         self._current_post = 0
         self.paste_post()
 
@@ -131,7 +147,7 @@ class SpellcheckUI:
     def update_current_post(self):
         message = self._post_text_box.get("1.0", tk.END)
         post_id = self._posts[self._current_post]["id"]
-        self._update_post_callback(Page.LA_VEGA, post_id, message)
+        update_post(self._page, post_id, message)
 
     def paste_post(self):
         post = self._posts[self._current_post]
@@ -141,19 +157,8 @@ class SpellcheckUI:
 
 
 def main():
-    data = retrive_posts(Page.LA_VEGA)
-    posts = data["data"]
-    ui = SpellcheckUI(posts)
+    ui = SpellcheckUI()
     ui.display()
-    
-    # first_post = posts[0]
-    # first_m = first_post["message"]
-    # print(first_m)
-    # post_id = first_post["id"]
-    # print(post_id)
-    # new_text = put_text_into_spellboy(first_m)
-    # result = update_post(post_id, new_text)
-    # print(result)
 
 
 if __name__ == "__main__":
