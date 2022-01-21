@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import date
 import json
 from typing import Dict, Any
 from facebook import GraphAPI 
@@ -103,8 +104,13 @@ class SpellcheckUI:
             column=2, row=0
         )
 
+        info_box_text = StringVar(value="")
+        info_box = ttk.Label(mainframe, textvariable=info_box_text)
+        info_box.grid(column=0, columnspan=2, row=2)
+        self.info_box_text = info_box_text
+
         text_box = tk.Text(mainframe, undo=True)
-        text_box.grid(column=0, columnspan=3, row=2)
+        text_box.grid(column=0, columnspan=3, row=3)
         self._post_text_box = text_box
 
         tk.Button(mainframe, text="previous", command=self.previous_post).grid(
@@ -142,6 +148,7 @@ class SpellcheckUI:
 
     def previous_post(self):
         self._current_post -= 1
+        if self._current_post <= 0: self._current_post = 0
         self.paste_post()
 
     def update_current_post(self):
@@ -154,6 +161,11 @@ class SpellcheckUI:
         message = post["message"]
         self._post_text_box.delete("1.0", tk.END)
         self._post_text_box.insert("1.0", message)
+        posted_date = date.fromisoformat(post['created_time'][0:10])
+        posted_date = posted_date.strftime("%a, %b %d %Y")
+        info = f"{self._current_post+1} / {len(self._posts)}. posted {posted_date}"
+        self.info_box_text.set(info)
+
 
 
 def main():
