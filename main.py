@@ -10,7 +10,7 @@ from tkinter import StringVar, ttk
 from tkinter.constants import N, W, E, S
 import webbrowser
 from enum import Enum
-from secrets import (
+from mysecrets import (
     pageToken_santiago,
     pageToken_la_vega,
     pageToken_navarrete,

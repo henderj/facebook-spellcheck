@@ -1,5 +1,5 @@
 from enum import Enum
-from secrets import (
+from mysecrets import (
     pageToken_santiago,
     pageToken_la_vega,
     pageToken_navarrete,
